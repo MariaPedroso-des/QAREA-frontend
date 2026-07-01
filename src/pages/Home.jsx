@@ -6,7 +6,7 @@ const Home = () => {
     <>
       <main className={styles.homePage}>
         <section className={styles.heroHome}>
-          <h1 className={`brandTitle brandTitle--hero ${styles.brandHome}`}>TRAVIA</h1>
+          <h1 className={`brandTitle brandTitle--hero ${styles.brandHome}`}>QAREA</h1>
           <h3 className={styles.tagLine}>rutas y paradas pet-friendly para viajar juntos</h3>
         </section>
         <section className={styles.ctaGrid}>
