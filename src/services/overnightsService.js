@@ -11,7 +11,7 @@ export const getAllOvernights = async (urlAPI) => {
   const response = await fetch(`${urlAPI}/api/overnights`)
 
   if (!response.ok) {
-    const message = await getErrorMessage(response, 'No se ha podido cargar las zonas de pernocta')
+    const message = await getErrorMessage(response, 'No se han podido cargar las zonas de pernocta')
     throw new Error(message)
   }
 

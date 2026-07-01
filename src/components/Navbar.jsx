@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <header className={styles.nav}>
       <div className={styles.navInner}>
-        <Link to="/" className={styles.navBrand}>TRAVIA</Link>
+        <Link to="/" className={styles.navBrand}>QAREA</Link>
 
         <nav className={styles.navLinks}>
           <Link to="/hikings" className={`${styles.navLink} ${styles.navRoutes}`}>Rutas</Link>

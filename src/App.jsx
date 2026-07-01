@@ -10,25 +10,28 @@ import OvernightDetailPage from './pages/OvernightDetailPage.jsx'
 import FormChoicePage from './pages/FormChoicePage.jsx'
 import HikingFormPage from './pages/HikingFormPage.jsx'
 import OvernightFormPage from './pages/OvernightFormPage.jsx'
-
+import Footer from './components/Footer.jsx'
 const App = () => {  
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/formchoice" element={<FormChoicePage />} />
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/formchoice" element={<FormChoicePage />} />
 
-        <Route path="/hikings" element={<HikingsPage />} />
-        <Route path="/hikings/new" element={<HikingFormPage />} />
-        <Route path="/hikings/edit/:id" element={<HikingFormPage />} />
-        <Route path="/hikings/:id" element={<HikingDetailPage />} />
+          <Route path="/hikings" element={<HikingsPage />} />
+          <Route path="/hikings/new" element={<HikingFormPage />} />
+          <Route path="/hikings/edit/:id" element={<HikingFormPage />} />
+          <Route path="/hikings/:id" element={<HikingDetailPage />} />
 
-        <Route path="/overnights" element={<OvernightsPage />} />
-        <Route path="/overnights/new" element={<OvernightFormPage />} />
-        <Route path="/overnights/edit/:id" element={<OvernightFormPage />} />
-        <Route path="/overnights/:id" element={<OvernightDetailPage />} />
-      </Routes>
-    </Router>
+          <Route path="/overnights" element={<OvernightsPage />} />
+          <Route path="/overnights/new" element={<OvernightFormPage />} />
+          <Route path="/overnights/edit/:id" element={<OvernightFormPage />} />
+          <Route path="/overnights/:id" element={<OvernightDetailPage />} />
+        </Routes>
+      </Router>
+      <Footer />
+    </>
   )
 }
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Climate+Crisis&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Climate+Crisis:YEAR@1979&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
 
 /* ==================
   1. RESET
@@ -100,6 +100,7 @@ legend {
 :root {
   --font-body: 'Alan Sans', system-ui, sans-serif;
   --font-brand: 'Climate Crisis', system-ui, sans-serif;
+  --font-claim: 'Fraunces', Georgia, serif;
 
   --coral: #F54936;
   --blue:  #3689F5;
@@ -142,7 +143,7 @@ legend {
     --color-bg: #101111;
     --color-surface: #181a1a;
     --color-text: #f3f3f3;
-    --color-text-soft: #c6d0db;
+    --color-text-soft: var(--slate);
     --color-heading: var(--white);
     --color-border: rgba(255, 255, 255, 0.12);
 
@@ -359,7 +360,13 @@ button:active {
   font-family: var(--font-brand);
   letter-spacing: 0.05em;
   line-height: 0.9;
-  text-transform: uppercase;
+}
+
+.brandTitle--claim {
+  font-family: var(--font-claim);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
 }
 
 .brandTitle--hero {
