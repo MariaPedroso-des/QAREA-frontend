@@ -1,21 +1,21 @@
-//esto onta el router, define rutas, no tiene lógica defiltros ni fetch hikings o overnigths
-//Ahora hace más que definir las  RUTAS!!!! CAMBIAR!!!
-
+// Router: solo define rutas. El chrome común (navegación, footer) vive en Layout.
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
+import Layout from './components/Layout.jsx'
 import Home from './pages/Home.jsx'
-import HikingDetailPage from './pages/HikingDetailPage.jsx'
+import FormChoicePage from './pages/FormChoicePage.jsx'
 import HikingsPage from './pages/HikingsPage.jsx'
+import HikingDetailPage from './pages/HikingDetailPage.jsx'
+import HikingFormPage from './pages/HikingFormPage.jsx'
 import OvernightsPage from './pages/OvernightsPage.jsx'
 import OvernightDetailPage from './pages/OvernightDetailPage.jsx'
-import FormChoicePage from './pages/FormChoicePage.jsx'
-import HikingFormPage from './pages/HikingFormPage.jsx'
 import OvernightFormPage from './pages/OvernightFormPage.jsx'
-import Footer from './components/Footer.jsx'
-const App = () => {  
+
+const App = () => {
   return (
-    <>
-      <Router>
-        <Routes>
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/formchoice" element={<FormChoicePage />} />
 
@@ -28,10 +28,9 @@ const App = () => {
           <Route path="/overnights/new" element={<OvernightFormPage />} />
           <Route path="/overnights/edit/:id" element={<OvernightFormPage />} />
           <Route path="/overnights/:id" element={<OvernightDetailPage />} />
-        </Routes>
-      </Router>
-      <Footer />
-    </>
+        </Route>
+      </Routes>
+    </Router>
   )
 }
 

@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
-import { getOvernightById, createOvernight, updateOvernight } from '../services/overnightsService.js'
+import BackLink from '../components/BackLink.jsx'
+import Select from '../components/Select.jsx'
+import { Stepper, Field, CheckGroup, FormActions } from '../components/FormKit.jsx'
 import { getOvernightOptions } from '../services/overnightOptionsService.js'
+import { getOvernightById, createOvernight, updateOvernight } from '../services/overnightsService.js'
 
+import styles from './FormPage.module.css'
 
 const initialFormData = {
   name: '',
@@ -18,15 +21,15 @@ const initialFormData = {
   proximity: [],
   signal: 'sin definir',
   stay: 'sin definir',
-  limitations: []
+  limitations: [],
 }
 
-const normalizeArray = (value) => {
-  return Array.isArray(value) ? value : [] 
-}
+const steps = ['Lo básico', 'Servicios y entorno', 'Imagen y mapa']
+
+const normalizeArray = (value) => (Array.isArray(value) ? value : [])
 
 const validUrl = (value) => {
-  if(!value) return true
+  if (!value) return true
 
   try {
     const url = new URL(value)
@@ -39,11 +42,12 @@ const validUrl = (value) => {
 const OvernightFormPage = () => {
   const navigate = useNavigate()
   const { id } = useParams()
-  const  editMode = Boolean(id)
+  const editMode = Boolean(id)
 
   const urlAPI = import.meta.env.VITE_APP_API_URL
 
   const [formData, setFormData] = useState(initialFormData)
+  const [step, setStep] = useState(0)
 
   const [options, setOptions] = useState({
     province: [],
@@ -51,7 +55,7 @@ const OvernightFormPage = () => {
     proximity: [],
     signal: [],
     stay: [],
-    limitations: []
+    limitations: [],
   })
 
   const [submit, setSubmit] = useState(false)
@@ -59,34 +63,31 @@ const OvernightFormPage = () => {
   const [loadingOvernight, setLoadingOvernight] = useState(editMode)
   const [error, setError] = useState(null)
 
+  const stepTitleRef = useRef(null)
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
         setError(null)
-
         const optionsData = await getOvernightOptions(urlAPI)
         setOptions(optionsData)
-
       } catch (error) {
         console.log(error)
-        setError(error.message || 'Error al cargar los las pociones del formulario')
+        setError(error.message || 'Error al cargar las opciones del formulario')
       } finally {
         setLoadingOptions(false)
       }
     }
+
     fetchOptions()
   }, [urlAPI])
 
   useEffect(() => {
-    if(!editMode) {
-      setLoadingOvernight(false)
-      return
-    }
+    if (!editMode) return
 
-    const fetchOvernightById = async ()=> {
+    const fetchOvernightById = async () => {
       try {
         setError(null)
-
         const data = await getOvernightById(urlAPI, id)
 
         setFormData({
@@ -100,7 +101,7 @@ const OvernightFormPage = () => {
           proximity: normalizeArray(data.proximity),
           signal: data.signal || 'sin definir',
           stay: data.stay || 'sin definir',
-          limitations: normalizeArray(data.limitations)
+          limitations: normalizeArray(data.limitations),
         })
       } catch (error) {
         console.log(error)
@@ -109,54 +110,86 @@ const OvernightFormPage = () => {
         setLoadingOvernight(false)
       }
     }
+
     fetchOvernightById()
   }, [editMode, id, urlAPI])
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+    stepTitleRef.current?.focus()
+  }, [step])
 
+  const handleChange = (e) => {
     const { name, value } = e.target
-    
-    setFormData((preFormData) => ({
-    ...preFormData,
-    [name]: value,
-    }))
+    setFormData((preFormData) => ({ ...preFormData, [name]: value }))
   }
 
   const handleArrayChange = (e) => {
     const { name, value, checked } = e.target
-    
+
     setFormData((preFormData) => {
       const currentArray = normalizeArray(preFormData[name])
 
       return {
         ...preFormData,
         [name]: checked
-        ? [...currentArray, value]
-        : currentArray.filter((e) => e !== value)
+          ? [...currentArray, value]
+          : currentArray.filter((item) => item !== value),
       }
     })
   }
 
+  // Cada paso valida solo sus propios campos
+  const validateStep = (index) => {
+    if (index === 0) {
+      if (!formData.name.trim()) return 'Escribe el nombre de la zona'
+      if (formData.name.trim().length < 3) return 'El nombre debe tener al menos 3 caracteres'
+      if (!formData.province) return 'Elige la provincia de la zona'
+      if (!formData.description.trim()) return 'Añade una descripción de la zona'
+      if (!formData.capacity) return 'Indica cuántas plazas de aparcamiento hay'
+    }
+
+    if (index === 2) {
+      if (!validUrl(formData.image)) return 'La URL de la imagen no es válida'
+      if (!validUrl(formData.mapsLink)) return 'La URL de la ubicación no es válida'
+    }
+
+    return null
+  }
+
+  const goNext = () => {
+    const stepError = validateStep(step)
+
+    if (stepError) {
+      setError(stepError)
+      return
+    }
+
+    setError(null)
+    setStep((current) => Math.min(current + 1, steps.length - 1))
+  }
+
+  const goBack = () => {
+    setError(null)
+    setStep((current) => Math.max(current - 1, 0))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError(null)
 
-    if (!formData.name.trim() ||
-        !formData.province ||
-        !formData.description.trim() ||
-        !formData.capacity  
-    ) {
-      setError('Hay campos obligatorios sin completar')
+    if (step < steps.length - 1) {
+      goNext()
       return
     }
-    if (formData.name.trim().length < 3) {
-      setError('El campo nombre debe tener al menos 3 caracteres')
-      return
-    }
-    
-    if (!validUrl(formData.mapsLink) || !validUrl(formData.image)) {
-      setError('La URL no tiene un formato válido')
-      return
+
+    for (let index = 0; index < steps.length; index += 1) {
+      const stepError = validateStep(index)
+
+      if (stepError) {
+        setError(stepError)
+        setStep(index)
+        return
+      }
     }
 
     const payload = {
@@ -170,228 +203,235 @@ const OvernightFormPage = () => {
       proximity: formData.proximity.length > 0 ? formData.proximity : ['sin definir'],
       signal: formData.signal || 'sin definir',
       stay: formData.stay || 'sin definir',
-      limitations: formData.limitations.length > 0 ? formData.limitations : ['sin definir']
+      limitations: formData.limitations.length > 0 ? formData.limitations : ['sin definir'],
     }
 
     try {
+      setError(null)
       setSubmit(true)
 
-      if(editMode) {
+      if (editMode) {
         await updateOvernight(urlAPI, id, payload)
-      } else 
-        await createOvernight(urlAPI, payload)
-
-      alert(editMode ? 'Zona de pernocta editada con éxito' : 'Zona de pernocta creada con éxito')
-      navigate('/overnights')
-
+        navigate(`/overnights/${id}`)
+      } else {
+        const created = await createOvernight(urlAPI, payload)
+        navigate(created?._id ? `/overnights/${created._id}` : '/overnights')
+      }
     } catch (error) {
       console.log(error)
-      setError(error.message ||  `Error al ${editMode ? 'editar' : 'crear'} la zona de pernocta`)
-    } finally {
+      setError(error.message || `Error al ${editMode ? 'editar' : 'crear'} la zona de pernocta`)
       setSubmit(false)
     }
   }
-  if (loadingOptions || loadingOvernight) return <Loader />
+
+  if (loadingOptions || loadingOvernight) return <Loader label="Cargando formulario" />
+
+  const isLastStep = step === steps.length - 1
 
   return (
-    <>
-      <Navbar />
+    <div className="page page--narrow">
+      <BackLink to={editMode ? `/overnights/${id}` : '/formchoice'}>
+        {editMode ? 'Volver a la pernocta' : 'Volver'}
+      </BackLink>
 
-      <main className="pageContainer">
-        <section className="section">
-          <h1>{editMode ? 'Editar zona de pernocta' : 'Publicar nueva pernocta'}</h1>
-        </section>
-        <form onSubmit={handleSubmit}>
-          <div className="formGroup">
-            <label htmlFor="name">Nombre </label>
-            <input 
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Nombre de la zona"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      <header className="pageHeader">
+        <h1>{editMode ? 'Editar pernocta' : 'Publicar una pernocta'}</h1>
+      </header>
 
-          <div className="formGroup">
-            <label htmlFor="description">Descripción</label>
-            <textarea 
-              id="description"
-              name="description"
-              placeholder="Descripción de la zona"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="formGroup">
-            <label htmlFor="province">Provincia</label>
-            <select
-              id="province"
+      <Stepper steps={steps} current={step} />
+
+      <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        {step === 0 && (
+          <>
+            <div className={styles.stepHead}>
+              <h2 className={styles.stepTitle} tabIndex={-1} ref={stepTitleRef}>Lo básico</h2>
+              <p className={styles.stepIntro}>Cómo se llama la zona, dónde está y cuánto cabe.</p>
+            </div>
+
+            <Field id="name" label="Nombre de la zona">
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Mirador de la Sierra"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </Field>
+
+            <Select
               name="province"
+              label="Provincia"
               value={formData.province}
+              options={options.province}
+              placeholder="Elige la provincia"
               onChange={handleChange}
-              required 
-            >
-              <option value="">Selecciona la provincia</option>
-                {options.province.map((province) => {
-                  return (
-                  <option key={province} value={province}>
-                    {province}
-                    </option>
-                    )
-                })}
-            </select>
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="capacity">Número aproximado de parcamientos</label>
-            <input 
-              id="capacity"
-              name="capacity"
-              placeholder="3"
-              type="number"
-              value={formData.capacity}
-              onChange={handleChange}
-              required
-              min="1"
-              max="50"
             />
-          </div>
 
-          <fieldset className="formGroup">
-            <legend>Servicios</legend>
-              {options.services.map((service) => {
-                return (
-                  <label key={service}>
-                    <input
-                      type="checkbox"
-                      name="services"
-                      value={service}
-                      checked={formData.services.includes(service)}
-                      onChange={handleArrayChange}
-                    />
-                    {service}
-                  </label>
-                )
-              })}
-          </fieldset>
+            <Field
+              id="description"
+              label="Descripción"
+              hint="Cómo es el sitio, el firme y qué conviene saber al llegar."
+            >
+              <textarea
+                id="description"
+                name="description"
+                rows={5}
+                placeholder="Explanada de tierra llana, tranquila por la noche..."
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Field>
 
-          <fieldset className="formGroup">
-            <legend>Proximidad</legend>
-              {options.proximity.map((proximity) => {
-                return (
-                  <label key={proximity}>
-                    <input
-                      type="checkbox"
-                      name="proximity"
-                      value={proximity}
-                      checked={formData.proximity.includes(proximity)}
-                      onChange={handleArrayChange}
-                    />
-                    {proximity}
-                  </label>
-                )
-              })}
-          </fieldset>
+            <Field id="capacity" label="Plazas de aparcamiento" hint="Número aproximado.">
+              <input
+                id="capacity"
+                name="capacity"
+                type="number"
+                inputMode="numeric"
+                placeholder="3"
+                min="1"
+                max="50"
+                value={formData.capacity}
+                onChange={handleChange}
+              />
+            </Field>
+          </>
+        )}
 
-          <div className="formGroup">
-            <label htmlFor="signal">Señal telefónica</label>
-            <select
-              id="signal"
+        {step === 1 && (
+          <>
+            <div className={styles.stepHead}>
+              <h2 className={styles.stepTitle} tabIndex={-1} ref={stepTitleRef}>Servicios y entorno</h2>
+              <p className={styles.stepIntro}>Qué hay en la zona y qué limitaciones tiene.</p>
+            </div>
+
+            <CheckGroup
+              legend="Servicios"
+              name="services"
+              options={options.services}
+              selected={formData.services}
+              onChange={handleArrayChange}
+              hint="Puedes elegir varios."
+            />
+
+            <CheckGroup
+              legend="Cerca de"
+              name="proximity"
+              options={options.proximity}
+              selected={formData.proximity}
+              onChange={handleArrayChange}
+              hint="Puedes elegir varios."
+            />
+
+            <Select
               name="signal"
+              label="Señal telefónica"
               value={formData.signal}
+              options={options.signal}
+              placeholder="Elige la señal disponible"
               onChange={handleChange}
-              required 
-            >
-              <option value="">Selecciona la señal telefónica disponible </option>
-                {options.signal.map((signal) => {
-                  return (
-                  <option key={signal} value={signal}>
-                    {signal}
-                    </option>
-                    )
-                })}
-            </select>
-          </div>
+            />
 
-          <div className="formGroup">
-            <label htmlFor="stay">Limitación de estancia</label>
-            <select
-              id="stay"
+            <Select
               name="stay"
+              label="Limitación de estancia"
               value={formData.stay}
+              options={options.stay}
+              placeholder="Elige la limitación de tiempo"
               onChange={handleChange}
-              required 
-            >
-              <option value="">Selecciona la limitación de tiempo</option>
-                {options.stay.map((stay) => {
-                  return (
-                  <option key={stay} value={stay}>
-                    {stay}
-                    </option>
-                    )
-                })}
-            </select>
-          </div>
-
-          <fieldset className="formGroup">
-            <legend>Limitaciones generales</legend>
-              {options.limitations.map((limitation) => {
-                return (
-                  <label key={limitation}>
-                    <input
-                      type="checkbox"
-                      name="limitations"
-                      value={limitation}
-                      checked={formData.limitations.includes(limitation)}
-                      onChange={handleArrayChange}
-                    />
-                    {limitation}
-                  </label>
-                )
-              })}
-          </fieldset>
-
-          <div className="formGroup">
-            <label htmlFor="image">URL de la imagen</label>
-            <input
-              id="image"
-              name="image"
-              type="url"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="https://..."
             />
-          </div>
 
-          <div className="formGroup">
-            <label htmlFor="mapsLink">URL de la ubicación</label>
-            <input
-              id="mapsLink"
-              name="mapsLink"
-              type="url"
-              value={formData.mapsLink}
-              onChange={handleChange}
-              placeholder="https://..."
+            <CheckGroup
+              legend="Limitaciones generales"
+              name="limitations"
+              options={options.limitations}
+              selected={formData.limitations}
+              onChange={handleArrayChange}
+              hint="Puedes elegir varias."
             />
-          </div>
+          </>
+        )}
 
-          {error && <p className="errorMessage">{error}</p>}
-          
-          <button className='btnPublish' type='submit' disabled={submit}>
-            {submit 
-            ? 
-            (editMode ? 'Guardando...' : 'Publicando...') 
-            : (editMode ? 'Guardar cambios' : 'Publicar zona de pernocta')}
-          </button>
-        </form>
+        {step === 2 && (
+          <>
+            <div className={styles.stepHead}>
+              <h2 className={styles.stepTitle} tabIndex={-1} ref={stepTitleRef}>Imagen y mapa</h2>
+              <p className={styles.stepIntro}>Opcional, pero ayuda mucho a quien la busque.</p>
+            </div>
 
-      </main>
-    </>
+            <Field id="image" label="URL de la imagen" hint="Enlace a una foto de la zona.">
+              <input
+                id="image"
+                name="image"
+                type="url"
+                inputMode="url"
+                placeholder="https://..."
+                value={formData.image}
+                onChange={handleChange}
+              />
+            </Field>
+
+            <Field id="mapsLink" label="URL de la ubicación" hint="Enlace al punto exacto.">
+              <input
+                id="mapsLink"
+                name="mapsLink"
+                type="url"
+                inputMode="url"
+                placeholder="https://..."
+                value={formData.mapsLink}
+                onChange={handleChange}
+              />
+            </Field>
+
+            <div className={styles.summary}>
+              <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>Nombre</span>
+                <span className={styles.summaryValue}>{formData.name || '—'}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>Provincia</span>
+                <span className={styles.summaryValue}>{formData.province || '—'}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>Plazas</span>
+                <span className={styles.summaryValue}>{formData.capacity || '—'}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>Servicios</span>
+                <span className={styles.summaryValue}>
+                  {formData.services.length > 0 ? formData.services.join(', ') : '—'}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+
+        {error && <p className="errorMessage" role="alert">{error}</p>}
+
+        <FormActions>
+          {step > 0 ? (
+            <button type="button" className="btn btn--secondary" onClick={goBack} disabled={submit}>
+              Atrás
+            </button>
+          ) : (
+            <span />
+          )}
+
+          {isLastStep ? (
+            <button type="button" className="btn btn--primary" onClick={handleSubmit} disabled={submit}>
+              {submit
+                ? (editMode ? 'Guardando...' : 'Publicando...')
+                : (editMode ? 'Guardar cambios' : 'Publicar pernocta')}
+            </button>
+          ) : (
+            <button type="button" className="btn btn--primary" onClick={goNext}>
+              Siguiente
+            </button>
+          )}
+        </FormActions>
+      </form>
+    </div>
   )
 }
 

@@ -1,0 +1,54 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  outline: none;
+}
+
+.stepIntro {
+  margin-top: var(--space-2);
+  color: var(--color-text-soft);
+}
+
+.stepHead {
+  margin-bottom: var(--space-1);
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-2);
+}
+
+.summaryRow {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.summaryLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.summaryValue {
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 40rem) {
+  .summaryRow {
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+}
