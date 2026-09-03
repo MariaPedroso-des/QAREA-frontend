@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import { getOvernightById, createOvernight, updateOvernight } from '../services/overnightsService.js'
 import { getOvernightOptions } from '../services/overnightOptionsService.js'
@@ -195,8 +194,6 @@ const OvernightFormPage = () => {
 
   return (
     <>
-      <Navbar />
-
       <main className="pageContainer">
         <section className="section">
           <h1>{editMode ? 'Editar zona de pernocta' : 'Publicar nueva pernocta'}</h1>

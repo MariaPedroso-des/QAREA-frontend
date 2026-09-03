@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import { getOvernightById, deleteOvernight } from '../services/overnightsService.js'
 
@@ -56,8 +55,6 @@ const OvernightDetailPage = () => {
   
   return (
     <>
-      <Navbar />
-
       <main className="pageContainer">
         <section className="section">
           <Link to="/overnights">← Volver a pernoctas</Link>

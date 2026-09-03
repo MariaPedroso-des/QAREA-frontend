@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import { getHikingOptions } from '../services/hikingOptionsService.js'
 import { getHikingById, createHiking, updateHiking } from '../services/hikingsService.js'
@@ -192,7 +191,6 @@ const HikingFormPage = () => {
 
   return (
     <>
-      <Navbar />
       <main className="pageContainer">
         <section className="section">
           <h1>{editMode ? 'Editar ruta' : 'Publicar nueva ruta'}</h1>

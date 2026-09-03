@@ -1,12 +1,9 @@
 import { Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 import styles from './FormChoicePage.module.css'
 
 const FormChoicePage = () => {
   return(
     <>
-      <Navbar />
-
       <main className={styles.choicePage}>
         <section className="section">
           <Link to="/">← Volver</Link>

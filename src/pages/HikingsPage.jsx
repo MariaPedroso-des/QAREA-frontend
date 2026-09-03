@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import HikingsFilters from '../components/HikingsFilters.jsx'
 import { getAllHikings } from '../services/hikingsService.js'
@@ -178,8 +177,6 @@ const HikingsPage = () => {
 
   return (
     <>
-      <Navbar />
-
       <main className="pageContainer">
         <section className="section">
           <h1 className={styles.pageTitle}>Rutas para moverse juntos</h1>

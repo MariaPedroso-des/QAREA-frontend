@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import OvernightsFilters from '../components/OvernightsFilters.jsx'
 import { getOvernightOptions } from '../services/overnightOptionsService.js'
@@ -195,8 +194,6 @@ const OvernightsPage = () => {
 
   return (
     <>
-      <Navbar />
-
       <main className="pageContainer">
         <section className="section">
           <h1 className={styles.pageTitle}>Zonas de pernocta para descansar</h1>

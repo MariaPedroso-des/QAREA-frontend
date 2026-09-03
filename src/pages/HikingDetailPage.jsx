@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
 import { getHikingById, deleteHiking } from '../services/hikingsService.js'
 
@@ -56,7 +55,6 @@ const HikingDetailPage = () => {
   
   return (
     <>
-      <Navbar />
 
       <main className="pageContainer">
         <section className="section">
