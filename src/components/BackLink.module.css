@@ -1,0 +1,20 @@
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  margin-left: calc(var(--space-3) * -1);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-text-soft);
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .back:hover {
+    color: var(--color-heading);
+    background-color: var(--color-hover);
+  }
+}
