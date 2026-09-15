@@ -1,10 +1,11 @@
 import styles from './Footer.module.css'
 
-function Footer() {
+const Footer = () => {
   return (
     <footer className={styles.footer}>
-      <div className={styles.footerContent}>
-        <p className={styles.footerCopy}>&copy; 2026 QAREA. Todos los derechos reservados.</p>
+      <div className={styles.inner}>
+        <p className={styles.copy}>&copy; 2026 QAREA</p>
+        <p className={styles.claim}>Go slow and see more.</p>
       </div>
     </footer>
   )

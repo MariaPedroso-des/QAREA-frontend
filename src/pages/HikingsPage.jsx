@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Loader from '../components/Loader.jsx'
 import FiltersPanel from '../components/FiltersPanel.jsx'
-import { IconRoute } from '../components/Icons.jsx'
+/*import { IconRoute } from '../components/Icons.jsx'*/
 import { getAllHikings } from '../services/hikingsService.js'
 import { getHikingOptions } from '../services/hikingOptionsService.js'
 
@@ -82,21 +82,21 @@ const HikingsPage = () => {
       label: 'Provincia',
       type: 'select',
       options: filtersOptions.province,
-      defaultOption: 'Todas las provincias'
+      defaultOption: 'Dónde quieres ir',
     },
     {
       name: 'difficulty',
       label: 'Dificultad',
       type: 'select',
       options: filtersOptions.difficulty,
-      defaultOption: 'Dificultad'
+      defaultOption: 'Qué dificultad buscas',
     },
     {
       name: 'typeTerrain',
       label: 'Tipo de terreno',
       type: 'select',
       options: filtersOptions.typeTerrain,
-      defaultOption: 'Tipos de terreno'
+      defaultOption: 'Qué tipo de terreno es',
     },
     {
       name: 'approvedFEDME',
@@ -110,7 +110,7 @@ const HikingsPage = () => {
       label: 'Acceso a agua',
       type: 'select',
       options: filtersOptions.accessWater,
-      defaultOption: 'Acceso a agua'
+      defaultOption: 'Si buscas agua cerca',
     },
     {
       name: 'distanceKm',
@@ -176,40 +176,40 @@ const HikingsPage = () => {
   }
 
   return (
-    <>
-      <main className="pageContainer">
-        <section className="section">
-          <h1 className={styles.pageTitle}>Rutas para moverse juntos</h1>
-          <HikingsFilters 
-            filters={filters}
-            handleFiltersChange={handleFiltersChange}
-            filtersConfig={filtersConfig}
-            resetFilters={resetFilters}
-          />
-        </section>
+    <main className="page">
+      <section className="section">
+        <h1 className={styles.pageTitle}>Rutas para moverse juntos</h1>
+        
+        <FiltersPanel 
+          filters={filters}
+          handleFiltersChange={handleFiltersChange}
+          filtersConfig={filtersConfig}
+          resetFilters={resetFilters}
+          resultsCount={filteredHikings.length}
+        />
+      </section>
 
-        <section className={styles.cardsGrid}>
-          {filteredHikings.length === 0 ? (
-            <p className={styles.emptyState}>Aún no existen rutas que coincidan con tu búsqueda</p>
-          ) : (
-            filteredHikings.map((e) => (
-              <article key={e._id} className={styles.itemCard}>
-                <Link to={`/hikings/${e._id}`} className={styles.cardLink}>
-                  <div className={styles.cardThumb}>
-                    {e.image ? (<img src={e.image} alt={e.name} />) : null}
-                  </div>
-                  <div>
-                    <h2 className={styles.cardName}>{e.name}</h2>
-                    <p className={styles.cardInfo}>{e.province}</p>
-                    <p className={styles.cardInfo}>{e.distanceKm} km</p>
-                  </div>
-                </Link>
-              </article>
-            ))
-          )}
-        </section>
-      </main>
-    </>
+      <section className={styles.cardsGrid}>
+        {filteredHikings.length === 0 ? (
+          <p className={styles.emptyState}>Aún no existen rutas que coincidan con tu búsqueda</p>
+        ) : (
+          filteredHikings.map((e) => (
+            <article key={e._id} className={styles.itemCard}>
+              <Link to={`/hikings/${e._id}`} className={styles.cardLink}>
+                <div className={styles.cardThumb}>
+                  {e.image ? (<img src={e.image} alt={e.name} />) : null}
+                </div>
+                <div>
+                  <h2 className={styles.cardName}>{e.name}</h2>
+                  <p className={styles.cardInfo}>{e.province}</p>
+                  <p className={styles.cardInfo}>{e.distanceKm} km</p>
+                </div>
+              </Link>
+            </article>
+          ))
+        )}
+      </section>
+    </main>
   )
 }
 

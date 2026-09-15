@@ -1,7 +1,8 @@
 .homePage {
  width: min(100% - 2rem), var(--container-width);
+ width: min(100% - 2rem, var(--container-width));
  margin-inline: auto;
- padding: 4rem 0 4rem;
+ padding: 4rem var(--gutter) 4rem;
 }
 
 

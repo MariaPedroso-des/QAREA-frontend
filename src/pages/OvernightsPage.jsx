@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Loader from '../components/Loader.jsx'
 import FiltersPanel from '../components/FiltersPanel.jsx'
-import { IconTent } from '../components/Icons.jsx'
+/*import { IconTent } from '../components/Icons.jsx'*/
 import { getAllOvernights } from '../services/overnightsService.js'
 import { getOvernightOptions } from '../services/overnightOptionsService.js'
 
@@ -86,49 +86,50 @@ const OvernightsPage = () => {
       label: 'Provincia',
       type: 'select',
       options: filtersOptions.province,
-      defaultOption: 'Todas las provincias'
+      defaultOption: 'Dónde quieres ir',
     },
     {
       name: 'services',
       label: 'Servicios',
       type: 'select',
       options: filtersOptions.services,
-      defaultOption: 'Servicios'
+      defaultOption: 'Qué servicios necesitas',
     },
     {
       name: 'proximity',
       label: 'Próximos',
       type: 'select',
       options: filtersOptions.proximity,
-      defaultOption: 'Elementos cercanos'
+      defaultOption: 'Qué hay cerca',
     },
     {
       name: 'signal',
       label: 'Señal telefónica',
       type: 'select',
       options: filtersOptions.signal,
-      defaultOption: 'Tipo de señal telefónica'
+      defaultOption: 'Qué cobertura necesitas',
     },
     {
       name: 'stay',
       label: 'Estancia',
       type: 'select',
       options: filtersOptions.stay,
-      defaultOption: 'Estancia'
+      defaultOption: 'Cuánto tiempo quieres quedarte',
     },
     {
       name: 'capacity',
       label: 'Capacidad del aparcamiento',
       type: 'range',
       min: 1,
-      max: capacity
+      max: maxCapacity,
+      unit: 'plazas',
     },
     {
       name: 'limitations',
       label: 'Limitaciones',
       type: 'select',
       options: filtersOptions.limitations,
-      defaultOption: 'Limitaciones'
+      defaultOption: 'Qué limitaciones tiene',
     }
   ]
 
@@ -193,15 +194,15 @@ const OvernightsPage = () => {
   }
 
   return (
-    <>
-      <main className="pageContainer">
+      <main className="page">
         <section className="section">
           <h1 className={styles.pageTitle}>Zonas de pernocta para descansar</h1>
-          <OvernightsFilters 
+          <FiltersPanel 
             filters={filters}
             handleFiltersChange={handleFiltersChange}
             filtersConfig={filtersConfig}
             resetFilters={resetFilters}
+            resultCount={filteredOvernights.length}
           />
         <section className={styles.cardsGrid}>
           {filteredOvernights.length === 0 ? (
@@ -228,7 +229,6 @@ const OvernightsPage = () => {
         </section>
 
       </main>
-    </>
   )
 }
 
