@@ -565,8 +565,7 @@ button,
 }
 button:hover,
 .btnHome:hover a {
-  transform: translateY(-2.5px);
-  background-color: #d3d3d3;
+  background-color: var(--color-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {

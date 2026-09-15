@@ -26,7 +26,7 @@ const Home = () => {
             </p>
           </Link>
           <Link to="/formchoice" className={`${styles.ctaCard} ${styles.ctaPublish}`}>
-            <span className={styles.ctaEyebrow}>Comunidad</span>
+            <span className={styles.ctaEyebrow}>Publicar</span>
             <h2 className={styles.ctaTitle}>Un nuevo lugar</h2>
             <p className={styles.ctaText}>
               Comparte rutas y paradas para ayudar a otros viajeros

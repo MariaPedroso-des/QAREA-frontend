@@ -47,7 +47,7 @@
 }
 
 .ctaCard:hover {
-  transform: translateY(-5px);
+  background-color: var(--color-hover);
 }
 
 .ctaEyebrow {
@@ -80,7 +80,9 @@
 }
 
 .ctaPublish {
-  background-color: #617ea4;
+  padding: var(--space-4);
+  border-color: var(--color-border);
+  background-color: var(--color-surface-2);
 }
 
 /*copia*/
