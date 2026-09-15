@@ -1,13 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import Navbar from '../components/Navbar.jsx'
 import Loader from '../components/Loader.jsx'
-import OvernightsFilters from '../components/OvernightsFilters.jsx'
-import { getOvernightOptions } from '../services/overnightOptionsService.js'
+import FiltersPanel from '../components/FiltersPanel.jsx'
+/*import { IconTent } from '../components/Icons.jsx'*/
 import { getAllOvernights } from '../services/overnightsService.js'
+import { getOvernightOptions } from '../services/overnightOptionsService.js'
+
 import styles from './ListPage.module.css'
 
+const emptyFilters = {
+  province: '',
+  services: '',
+  capacity: 1,
+  proximity: '',
+  signal: '',
+  stay: '',
+  limitations: '',
+}
 
 const OvernightsPage = () => {
   const urlAPI = import.meta.env.VITE_APP_API_URL
@@ -20,24 +30,15 @@ const OvernightsPage = () => {
     proximity: [],
     signal: [],
     stay: [],
-    limitations: []
+    limitations: [],
   })
 
-  const [filters, setFilters] = useState({
-    province: '',
-    services: '',
-    capacity: 1,
-    proximity: '',
-    signal: '',
-    stay: '',
-    limitations: ''
-  })
-  
-  const [loading, setLoading] =useState(true)
+  const [filters, setFilters] = useState(emptyFilters)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
-  const capacity = overnights.length > 0 ? Math.max(...overnights.map((e) =>e.capacity || 1 )) : 1
-  
+
+  const maxCapacity = overnights.length > 0 ? Math.max(...overnights.map((e) => e.capacity || 1)) : 1
+
   useEffect(() => {
     const fetchPageData = async () => {
       try {
@@ -46,25 +47,17 @@ const OvernightsPage = () => {
 
         const [overnightsArray, optionsData] = await Promise.all([
           getAllOvernights(urlAPI),
-          getOvernightOptions(urlAPI)
+          getOvernightOptions(urlAPI),
         ])
-        setOvernights(overnightsArray)
 
+        setOvernights(overnightsArray)
         setFiltersOptions(optionsData)
 
-        const maxCapacity = overnightsArray.length > 0 ? Math.max(...overnightsArray.map((overnight) => overnight.capacity || 1)) : 1
-      
-        setFilters({
-          province: '',
-          services:'',
-          capacity: maxCapacity,
-          proximity: '',
-          signal: '',
-          stay: '',
-          limitations: ''
+        const capacity = overnightsArray.length > 0
+          ? Math.max(...overnightsArray.map((e) => e.capacity || 1))
+          : 1
 
-        })
-      
+        setFilters({ ...emptyFilters, capacity })
       } catch (error) {
         console.log(error)
         setError(error.message || 'Error al cargar los datos')
@@ -84,67 +77,59 @@ const OvernightsPage = () => {
   }
 
   const resetFilters = () => {
-    setFilters({
-      province: '',
-      services: '',
-      capacity: capacity,
-      proximity: '',
-      signal: '',
-      stay: '',
-      limitations: ''
-    })
+    setFilters({ ...emptyFilters, capacity: maxCapacity })
   }
 
-  //configuración de los filtros por cada uno de ellos
   const filtersConfig = [
     {
       name: 'province',
       label: 'Provincia',
       type: 'select',
       options: filtersOptions.province,
-      defaultOption: 'Todas las provincias'
+      defaultOption: 'Dónde quieres ir',
     },
     {
       name: 'services',
       label: 'Servicios',
       type: 'select',
       options: filtersOptions.services,
-      defaultOption: 'Servicios'
+      defaultOption: 'Qué servicios necesitas',
     },
     {
       name: 'proximity',
       label: 'Próximos',
       type: 'select',
       options: filtersOptions.proximity,
-      defaultOption: 'Elementos cercanos'
+      defaultOption: 'Qué hay cerca',
     },
     {
       name: 'signal',
       label: 'Señal telefónica',
       type: 'select',
       options: filtersOptions.signal,
-      defaultOption: 'Tipo de señal telefónica'
+      defaultOption: 'Qué cobertura necesitas',
     },
     {
       name: 'stay',
       label: 'Estancia',
       type: 'select',
       options: filtersOptions.stay,
-      defaultOption: 'Estancia'
+      defaultOption: 'Cuánto tiempo quieres quedarte',
     },
     {
       name: 'capacity',
       label: 'Capacidad del aparcamiento',
       type: 'range',
       min: 1,
-      max: capacity
+      max: maxCapacity,
+      unit: 'plazas',
     },
     {
       name: 'limitations',
       label: 'Limitaciones',
       type: 'select',
       options: filtersOptions.limitations,
-      defaultOption: 'Limitaciones'
+      defaultOption: 'Qué limitaciones tiene',
     }
   ]
 
@@ -190,21 +175,34 @@ const OvernightsPage = () => {
     )
   })
 
-  if (loading) return <Loader />
-  if (error) return <p>{error}</p>
+  if (loading) return <Loader label="Cargando pernoctas" />
+
+  if (error) {
+    return (
+      <div className="page">
+        <header className="pageHeader">
+          <h1>Pernoctas</h1>
+        </header>
+        <div className={styles.errorBox}>
+          <p className="errorMessage">{error}</p>
+          <button type="button" className="btn btn--secondary" onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <>
-      <Navbar />
-
-      <main className="pageContainer">
+      <main className="page">
         <section className="section">
           <h1 className={styles.pageTitle}>Zonas de pernocta para descansar</h1>
-          <OvernightsFilters 
+          <FiltersPanel 
             filters={filters}
             handleFiltersChange={handleFiltersChange}
             filtersConfig={filtersConfig}
             resetFilters={resetFilters}
+            resultCount={filteredOvernights.length}
           />
         <section className={styles.cardsGrid}>
           {filteredOvernights.length === 0 ? (
@@ -231,7 +229,6 @@ const OvernightsPage = () => {
         </section>
 
       </main>
-    </>
   )
 }
 

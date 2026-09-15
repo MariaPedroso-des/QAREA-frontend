@@ -1,0 +1,123 @@
+/* ---- Stepper ---- */
+.stepper {
+  margin-bottom: var(--space-5);
+}
+
+.stepperHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.stepCount {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.stepName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.stepTrack {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-1);
+}
+
+.stepBar {
+  height: 0.25rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-border);
+  transition: background-color var(--dur) var(--ease);
+}
+
+.stepBarDone {
+  background-color: var(--olive);
+}
+
+/* ---- Campos ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--color-text-soft);
+}
+
+/* ---- Checkbox en forma de chip ---- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.chipOn {
+  border-color: var(--olive);
+  background-color: var(--color-surface-2);
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.chip:has(:focus-visible) {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--color-border-strong);
+  }
+}
+
+/* ---- Acciones ---- */
+.actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.actions > * {
+  width: 100%;
+}
+
+@media (min-width: 30rem) {
+  .actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .actions > * {
+    width: auto;
+    min-width: 9rem;
+  }
+}
